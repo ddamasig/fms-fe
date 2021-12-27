@@ -33,16 +33,74 @@ export default {
     '@nuxtjs/vuetify',
   ],
 
+  auth: {
+    strategies: {
+      laravelSanctum: {
+        provider: 'laravel/sanctum',
+        url: 'http://localhost:80',
+      },
+    },
+  },
+
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
     // https://go.nuxtjs.dev/axios
     '@nuxtjs/axios',
     // https://go.nuxtjs.dev/pwa
     '@nuxtjs/pwa',
+    '@nuxtjs/auth-next',
   ],
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
-  axios: {},
+  axios: {
+    baseUrl: 'http://localhost:80/api',
+    credentials: true
+  },
+  // proxy: {
+  //   '/laravel': {
+  //     // target: 'https://laravel-auth.nuxtjs.app',
+  //     target: 'http://localhost:80',
+  //     pathRewrite: { '^/laravel': '/' }
+  //   }
+  // },
+  // auth: {
+  //   strategies: {
+  //     'laravelSanctum': {
+  //       provider: 'laravel/sanctum',
+  //       url: 'http://localhost:80',
+  //       endpoints: {
+  //         login: {
+  //           url: '/api/login',
+  //         },
+  //         user: {
+  //           url: '/api/user',
+  //         },
+  //       }
+  //     }
+  //   }
+  // },
+  proxy: {
+    '/laravel': {
+      target: 'http://localhost:3000',
+      pathRewrite: { '^/laravel': '/' }
+    }
+  },
+  auth: {
+    strategies: {
+      laravelSanctum: {
+        provider: 'laravel/sanctum',
+        url: 'http://localhost:80',
+        endpoints: {
+          login: {
+            url: '/api/login',
+          },
+          user: {
+            url: '/api/user',
+          },
+        }
+      }
+    }
+  },
 
   // PWA module configuration: https://go.nuxtjs.dev/pwa
   pwa: {

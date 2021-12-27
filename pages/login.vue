@@ -12,10 +12,10 @@
             <v-row>
               <v-col cols="12">
                 <v-text-field
-                  v-model="model.username"
+                  v-model="model.email"
                   prepend-inner-icon="mdi-account"
                   dense
-                  label="Username"
+                  label="Email"
                   required
                 ></v-text-field>
               </v-col>
@@ -32,10 +32,14 @@
               </v-col>
 
               <v-col cols="12">
-                <v-btn to="/security/users" color="primary" block>Login</v-btn>
+                <v-btn color="primary" block @click="authenticate()"
+                  >Login</v-btn
+                >
               </v-col>
               <v-col cols="12">
-                <v-btn to="/forgot-password" text block>Forgot your password?</v-btn>
+                <v-btn to="/forgot-password" text block
+                  >Forgot your password?</v-btn
+                >
               </v-col>
             </v-row>
           </v-container>
@@ -50,9 +54,30 @@ export default {
   layout: "blank",
   data: () => ({
     model: {
-      username: "",
+      email: "",
       password: "",
     },
   }),
+  methods: {
+    async authenticate() {
+      await this.$auth.loginWith("laravelSanctum", {
+        data: {
+          email: this.email,
+          password: this.password,
+        },
+      });
+
+      //  this.$router.push('/')
+    },
+    // authenticate() {
+    //   let response = this.$axios.$post("/login", {
+    //     email: this.model.email,
+    //     password: this.model.password,
+    //   });
+
+    //   console.log("Response:");
+    //   console.log(response);
+    // },
+  },
 };
 </script>

@@ -75,21 +75,13 @@
                     :class="item.status == 'active' ? 'success' : 'error'"
                     small
                   >
-                    {{item.status.toUpperCase()}}
+                    {{ item.status.toUpperCase() }}
                   </v-chip>
                 </template>
                 <template #[`item.actions`]="{ item }">
-                  <v-menu
-                    bottom
-                    rounded
-                    offset-y
-                  >
+                  <v-menu bottom rounded offset-y>
                     <template v-slot:activator="{ on }">
-                      <v-btn
-                        icon
-                        v-on="on"
-                        class="ma-2"
-                      >
+                      <v-btn icon v-on="on" class="ma-2">
                         <v-icon>mdi-dots-horizontal</v-icon>
                       </v-btn>
                     </template>
@@ -149,9 +141,7 @@
       <v-dialog v-model="confirmDialog.show" persistent max-width="290">
         <v-card>
           <v-card-title class="text-h5"> Confirmation </v-card-title>
-          <v-card-text
-            >{{confirmDialog.message}}</v-card-text
-          >
+          <v-card-text>{{ confirmDialog.message }}</v-card-text>
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn text @click="confirmDialog.show = false"> Close </v-btn>
@@ -306,6 +296,14 @@ export default {
       this.confirmDialog.message = `Are you sure you want to disable the account of ${item.name}? Note that you can enable this account later.`;
       this.confirmDialog.show = true;
     },
+    /**
+     * Retrieves a collection of users from the database.
+     */
+    async fetchUsers() {
+      const response = await this.$axios.$get("user");
+      console.log("Response:")
+      console.log(response)
+    },
     deleteItem() {
       this.confirmDialog.loading = true;
       setTimeout(() => {
@@ -318,13 +316,15 @@ export default {
           .indexOf(this.itemForModal.id);
 
         // this.users.splice(index, 1);
-        this.users[index].status = "inactive"
-
+        this.users[index].status = "inactive";
 
         this.alert.message = `Successfully disabled ${this.itemForModal.name}`;
         this.alert.show = true;
       }, 1500);
     },
+  },
+  async fetch() {
+    await this.fetchUsers()
   },
   created() {
     if (this.$route.query) {
