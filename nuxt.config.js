@@ -53,7 +53,7 @@ export default {
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios
   axios: {
-    baseUrl: 'http://localhost:80/api',
+    baseUrl: 'http://localhost/api',
     credentials: true
   },
   // proxy: {
@@ -89,13 +89,13 @@ export default {
     strategies: {
       laravelSanctum: {
         provider: 'laravel/sanctum',
-        url: 'http://localhost:80',
+        url: 'http://localhost',
         endpoints: {
           login: {
             url: '/api/login',
           },
           user: {
-            url: '/api/user',
+            url: '/api/self',
           },
         }
       }

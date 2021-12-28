@@ -62,12 +62,12 @@ export default {
     async authenticate() {
       await this.$auth.loginWith("laravelSanctum", {
         data: {
-          email: this.email,
-          password: this.password,
+          email: this.model.email,
+          password: this.model.password,
         },
       });
 
-      //  this.$router.push('/')
+       this.$router.push('/security/user')
     },
     // authenticate() {
     //   let response = this.$axios.$post("/login", {

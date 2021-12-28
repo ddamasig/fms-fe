@@ -75,7 +75,7 @@
                     :class="item.status == 'active' ? 'success' : 'error'"
                     small
                   >
-                    {{ item.status.toUpperCase() }}
+                    {{ item.status ? item.status.toUpperCase() : '-' }}
                   </v-chip>
                 </template>
                 <template #[`item.actions`]="{ item }">
@@ -300,9 +300,12 @@ export default {
      * Retrieves a collection of users from the database.
      */
     async fetchUsers() {
-      const response = await this.$axios.$get("user");
-      console.log("Response:")
-      console.log(response)
+      await this.$axios.$get("user")
+        .then((res) => {
+          console.log("Response:")
+          console.log(res)
+          this.users = res.data
+        })
     },
     deleteItem() {
       this.confirmDialog.loading = true;
@@ -323,14 +326,15 @@ export default {
       }, 1500);
     },
   },
-  async fetch() {
-    await this.fetchUsers()
-  },
-  created() {
+  // async fetch() {
+  //   await this.fetchUsers()
+  // },
+  async created() {
     if (this.$route.query) {
       this.alert.message = this.$route.query.alertMessage;
       this.alert.show = this.$route.query.alertShow;
     }
+    await this.fetchUsers()
   },
 };
 </script>
