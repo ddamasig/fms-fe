@@ -57,29 +57,10 @@ export default {
     baseUrl: 'http://localhost/api',
     credentials: true
   },
-  // proxy: {
-  //   '/laravel': {
-  //     // target: 'https://laravel-auth.nuxtjs.app',
-  //     target: 'http://localhost:80',
-  //     pathRewrite: { '^/laravel': '/' }
-  //   }
-  // },
-  // auth: {
-  //   strategies: {
-  //     'laravelSanctum': {
-  //       provider: 'laravel/sanctum',
-  //       url: 'http://localhost:80',
-  //       endpoints: {
-  //         login: {
-  //           url: '/api/login',
-  //         },
-  //         user: {
-  //           url: '/api/user',
-  //         },
-  //       }
-  //     }
-  //   }
-  // },
+  router: {
+    // middleware: ['auth']
+    middleware: ['auth']
+  },
   proxy: {
     '/laravel': {
       target: 'http://localhost:3000',

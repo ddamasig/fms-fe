@@ -7,7 +7,7 @@
 
     <v-row>
       <v-col cols="12">
-        <v-card>
+        <v-card outlined>
           <v-card-title> Manage Users </v-card-title>
           <v-card-subtitle>
             This is the list of all the system's users. Click on the
@@ -20,12 +20,23 @@
                 <v-subheader>Filter by Role</v-subheader>
                 <v-list-item-group v-model="filters.roles" color="primary">
                   <v-list-item v-for="(item, i) in options.roles" :key="i">
-                    <v-list-item-icon>
-                      <v-icon v-text="item.icon"></v-icon>
-                    </v-list-item-icon>
+                    <v-list-item-avatar>
+                      <v-icon class="lighten-1">{{
+                        item.icon
+                      }}</v-icon>
+                    </v-list-item-avatar>
+
                     <v-list-item-content>
-                      <v-list-item-title v-text="item.text" :to="item.id" />
+                      <v-list-item-title v-text="item.text"></v-list-item-title>
                     </v-list-item-content>
+
+                    <v-list-item-action>
+                      <v-btn icon color="primary" small class="white--text">
+                        <v-avatar color="primary" size="28">
+                          {{ item.count }}
+                        </v-avatar>
+                      </v-btn>
+                    </v-list-item-action>
                   </v-list-item>
                 </v-list-item-group>
               </v-list>
@@ -54,9 +65,9 @@
                     </v-col>
                   </v-toolbar>
                 </template>
-                <template #[`item.name`]="{ item }">
+                <template #[`item.full_name`]="{ item }">
                   <nuxt-link :to="`/security/users/${item.id}`">
-                    {{ item.name }}
+                    {{ item.full_name }}
                   </nuxt-link>
                 </template>
                 <template #[`item.avatar`]="{ item }">
@@ -210,7 +221,7 @@ export default {
         text: "Name",
         align: "start",
         filterable: true,
-        value: "name",
+        value: "full_name",
       },
       { text: "Sex", value: "sex" },
       { text: "Roles", value: "roles" },
@@ -234,9 +245,12 @@ export default {
      */
     async fetchUsers() {
       await this.$axios.$get("user").then((res) => {
-        console.log("Response:");
-        console.log(res);
         this.users = res.data;
+      });
+      await this.$axios.$get("count/user").then((res) => {
+        console.log("Count:");
+        console.log(res);
+        this.options.roles = res.roles;
       });
     },
     deleteItem() {
@@ -266,12 +280,18 @@ export default {
       return moment(x).format("MMMM D YYYY, h:mm a");
     },
   },
+  async fetch() {
+    // Check for permissions
+    if (!this.$auth.user.abilities.includes("list user")) {
+      this.$router.push("/");
+    }
+    await this.fetchUsers();
+  },
   async created() {
     if (this.$route.query) {
       this.alert.message = this.$route.query.alertMessage;
       this.alert.show = this.$route.query.alertShow;
     }
-    await this.fetchUsers();
   },
 };
 </script>

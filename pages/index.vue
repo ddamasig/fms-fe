@@ -41,17 +41,6 @@
                     {{subitem.icon}}
                   </v-icon>
                 </v-avatar>
-                <!-- <div>
-                  <v-card-title
-                    class="text-h6 font-weight-medium grey--text text--darken-5"
-                    v-text="subitem.title"
-                  ></v-card-title>
-
-                  <v-card-subtitle
-                    v-text="subitem.description"
-                    class="primary--text"
-                  />
-                </div> -->
               </div>
             </v-card>
           </v-col>

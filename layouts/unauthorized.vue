@@ -1,5 +1,5 @@
 <template>
-  <v-app style="background-color: #f9fafc">
+  <v-app style="background-color: #F9FAFC">
     <v-navigation-drawer
       v-model="drawer"
       :mini-variant="miniVariant"
@@ -8,19 +8,29 @@
       app
     >
       <v-list nav dense>
-        <v-img src="/images/logo.png" class="mx-5 mb-5" />
-        <v-divider class="mb-3" />
+        <v-img src="/images/logo.png" class="mx-5 mb-5"/>
+        <v-divider class="mb-3"/>
         <v-list-item link>
           <v-list-item-icon>
-            <v-badge avatar bordered overlap small color="red">
+            <v-badge
+              avatar
+              bordered
+              overlap
+              small
+              color="red"
+            >
               <template v-slot:badge>
-                <v-avatar> 12 </v-avatar>
+                <v-avatar >
+                  12
+                </v-avatar>
               </template>
               <v-icon>mdi-car</v-icon>
             </v-badge>
           </v-list-item-icon>
 
-          <v-list-item-title> Vehicles </v-list-item-title>
+          <v-list-item-title>
+            Vehicles
+          </v-list-item-title>
         </v-list-item>
         <v-list-item link>
           <v-list-item-icon>
@@ -37,7 +47,7 @@
           :prepend-icon="item.icon"
         >
           <template v-slot:activator>
-            <v-list-item-title>{{ item.name }}</v-list-item-title>
+            <v-list-item-title>{{item.name}}</v-list-item-title>
           </template>
           <v-list-item
             v-for="(subitem, k) in item.items"
@@ -54,15 +64,22 @@
         </v-list-group>
       </v-list>
     </v-navigation-drawer>
-    <v-app-bar :clipped-left="clipped" color="primary" app>
-      <v-app-bar-nav-icon @click="drawer = !drawer">
+    <v-app-bar
+      :clipped-left="clipped"
+      color="primary"
+      app
+      dense
+    >
+      <v-app-bar-nav-icon @click="drawer=!drawer">
         <v-avatar size="28">
-          <v-img src="/images/logo-white.png" />
+          <v-img src="/images/logo-white.png"/>
         </v-avatar>
       </v-app-bar-nav-icon>
 
       <v-app-bar-title class="text-no-wrap white--text">
-        <h5>Fleet Management System &nbsp;&nbsp;&nbsp;</h5>
+        <h5>
+          Fleet Management System &nbsp;&nbsp;&nbsp;
+        </h5>
       </v-app-bar-title>
 
       <!-- <v-toolbar-title v-text="title" /> -->
@@ -76,37 +93,54 @@
         <v-icon>mdi-bug</v-icon>
       </v-btn>
 
-      <v-menu bottom min-width="164px" rounded offset-y>
+      <v-menu
+        bottom
+        min-width="164px"
+        rounded
+        offset-y
+      >
         <template v-slot:activator="{ on }">
-          <v-btn icon v-on="on" class="ma-2">
-            <v-avatar size="42" color="grey">
-              <v-img v-if="$auth.user.avatar" :src="$auth.user.avatar" />
-              <v-icon v-else color="white">mdi-account</v-icon>
+          <v-btn
+            icon
+            v-on="on"
+            class="ma-2"
+          >
+            <v-avatar size="42" color="primary">
+              <v-img :src="user.avatar"/>
             </v-avatar>
           </v-btn>
         </template>
         <v-card>
           <v-list-item-content class="justify-center">
             <div class="mx-auto text-center">
-              <v-avatar size="42" color="grey">
-                <v-img v-if="$auth.user.avatar" :src="$auth.user.avatar" />
-                <v-icon v-else color="white">mdi-account</v-icon>
+              <v-avatar size="42" color="primary">
+                <v-img :src="user.avatar"/>
               </v-avatar>
-              <h4 class="mt-2">{{ $auth.user.full_name }}</h4>
+              <h4 class="mt-2">{{ user.fullName }}</h4>
               <p class="text-caption mt-1">
-                {{ $auth.user.email }}
+                {{ user.email }}
               </p>
               <v-divider class="my-1"></v-divider>
-              <v-btn small text> Change Password </v-btn>
+              <v-btn
+                small
+                text
+              >
+                Change Password
+              </v-btn>
               <v-divider class="my-1"></v-divider>
-              <v-btn text small> Logout </v-btn>
+              <v-btn
+                text
+                small
+              >
+                Logout
+              </v-btn>
             </div>
           </v-list-item-content>
         </v-card>
       </v-menu>
     </v-app-bar>
     <v-main>
-      <v-container fluid>
+      <v-container fluid fill-height>
         <Nuxt />
       </v-container>
     </v-main>
@@ -127,7 +161,12 @@
         </v-list-item>
       </v-list>
     </v-navigation-drawer> -->
-    <v-footer :absolute="!fixed" dark color="primary" app>
+    <v-footer
+      :absolute="!fixed"
+      dark
+      color="primary"
+      app
+    >
       <span>&copy; {{ new Date().getFullYear() }}</span>
     </v-footer>
   </v-app>
@@ -135,7 +174,7 @@
 
 <script>
 export default {
-  data() {
+  data () {
     return {
       clipped: true,
       drawer: true,
@@ -147,17 +186,17 @@ export default {
           items: [
             {
               name: "Truck Location",
-              to: "/dashboard/truck-location",
+              to: "/dashboard/truck-location"
             },
             {
               name: "Truck Expense",
-              to: "/dashboard/truck-expense",
+              to: "/dashboard/truck-expense"
             },
             {
               name: "Receivables",
-              to: "/dashboard/receivables",
-            },
-          ],
+              to: "/dashboard/receivables"
+            }
+          ]
         },
         {
           name: "Inventory",
@@ -168,8 +207,8 @@ export default {
             },
             {
               name: "Service/Repair",
-            },
-          ],
+            }
+          ]
         },
         {
           name: "Trucking",
@@ -186,8 +225,8 @@ export default {
             },
             {
               name: "Arrival",
-            },
-          ],
+            }
+          ]
         },
         {
           name: "Security",
@@ -195,31 +234,27 @@ export default {
           items: [
             {
               name: "Users",
-              to: "/security/users",
+              to: "/security/users"
             },
             {
               name: "Roles",
-              to: "/security/roles",
-            },
-          ],
-        },
+              to: "/security/roles"
+            }
+          ]
+        }
       ],
       user: {
-        initials: "JD",
-        fullName: "John Doe",
-        email: "john.doe@doe.com",
-        avatar: "https://i.pravatar.cc/128",
+        initials: 'JD',
+        fullName: 'John Doe',
+        email: 'john.doe@doe.com',
+        avatar: 'https://i.pravatar.cc/128'
       },
       currentItem: 1,
       miniVariant: false,
       right: true,
       rightDrawer: false,
-      title: "Vuetify.js",
-    };
-  },
-  created() {
-    console.log("Current User:");
-    console.log(this.$auth.user);
-  },
-};
+      title: 'Vuetify.js'
+    }
+  }
+}
 </script>
