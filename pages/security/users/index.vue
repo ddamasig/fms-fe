@@ -70,13 +70,30 @@
                     >
                   </v-avatar>
                 </template>
+                <template #[`item.sex`]="{ item }">
+                  {{ item.sex | ucfirst }}
+                </template>
                 <template #[`item.status`]="{ item }">
                   <v-chip
                     :class="item.status == 'active' ? 'success' : 'error'"
                     small
                   >
-                    {{ item.status ? item.status.toUpperCase() : '-' }}
+                    {{ item.status | ucfirst }}
                   </v-chip>
+                </template>
+                <template #[`item.roles`]="{ item }">
+                  <v-chip
+                    v-for="(role, r) in item.roles"
+                    :key="r"
+                    color="primary"
+                    class="mr-1"
+                    small
+                  >
+                    {{ role.name | ucfirst }}
+                  </v-chip>
+                </template>
+                <template #[`item.created_at`]="{ item }">
+                  {{ item.created_at | datetime }}
                 </template>
                 <template #[`item.actions`]="{ item }">
                   <v-menu bottom rounded offset-y>
@@ -88,12 +105,6 @@
                     <v-card>
                       <v-list-item-content class="justify-center">
                         <div class="mx-auto text-center">
-                          <!-- <v-avatar
-                            color="primary"
-                            size="32"
-                          >
-                            <span class="white--text text-h5">{{ user.initials }}</span>
-                          </v-avatar> -->
                           <v-btn
                             small
                             text
@@ -114,22 +125,6 @@
                       </v-list-item-content>
                     </v-card>
                   </v-menu>
-                  <!-- <v-btn
-                    :to="`/security/users/${item.id}`"
-                    icon
-                    color="primary"
-                  >
-                    <v-icon small> mdi-pencil </v-icon>
-                  </v-btn>
-                  <v-btn
-                    icon
-                    @click="openDeleteDialog(item)"
-                    color="error"
-                  >
-                    <v-icon small>
-                      mdi-delete
-                    </v-icon>
-                  </v-btn> -->
                 </template>
               </v-data-table>
             </v-col>
@@ -160,6 +155,8 @@
 </template>
 
 <script>
+import moment from "moment";
+
 export default {
   data: () => ({
     breadcrumbs: [
@@ -216,79 +213,15 @@ export default {
         value: "name",
       },
       { text: "Sex", value: "sex" },
-      { text: "Role", value: "role" },
+      { text: "Roles", value: "roles" },
       { text: "Status", value: "status" },
-      { text: "Last Update", value: "updated_at" },
+      { text: "Created At", value: "created_at" },
       { text: "Actions", value: "actions", sortable: false },
     ],
     itemForModal: {
       id: 0,
     },
-    users: [
-      {
-        id: 1,
-        name: "Juan S. Dela Cruz",
-        sex: "Male",
-        role: "Driver",
-        updated_at: "11:55 pm - December 03, 2021",
-        avatar: "128",
-        status: "active",
-      },
-      {
-        id: 2,
-        name: "Casey Rath",
-        sex: "Male",
-        role: "Driver",
-        updated_at: "11:55 pm - December 03, 2021",
-        avatar: null,
-        status: "inactive",
-      },
-      {
-        id: 3,
-        name: "Noah Schinner",
-        sex: "Male",
-        role: "Driver",
-        updated_at: "11:55 pm - December 03, 2021",
-        avatar: "124",
-        status: "inactive",
-      },
-      {
-        id: 4,
-        name: "Jesse Hagenes Sr.",
-        sex: "Male",
-        role: "Driver",
-        updated_at: "11:55 pm - December 03, 2021",
-        avatar: null,
-        status: "active",
-      },
-      {
-        id: 5,
-        name: "Elijah Baumbach",
-        sex: "Male",
-        role: "Driver",
-        updated_at: "11:55 pm - December 03, 2021",
-        avatar: null,
-        status: "active",
-      },
-      {
-        id: 6,
-        name: "Marcus Rau",
-        sex: "Male",
-        role: "Driver",
-        updated_at: "11:55 pm - December 03, 2021",
-        avatar: "126",
-        status: "active",
-      },
-      {
-        id: 7,
-        name: "Andy Prohaska",
-        sex: "Male",
-        role: "Driver",
-        updated_at: "11:55 pm - December 03, 2021",
-        avatar: "132",
-        status: "active",
-      },
-    ],
+    users: [],
   }),
   methods: {
     openDeleteDialog(item) {
@@ -300,12 +233,11 @@ export default {
      * Retrieves a collection of users from the database.
      */
     async fetchUsers() {
-      await this.$axios.$get("user")
-        .then((res) => {
-          console.log("Response:")
-          console.log(res)
-          this.users = res.data
-        })
+      await this.$axios.$get("user").then((res) => {
+        console.log("Response:");
+        console.log(res);
+        this.users = res.data;
+      });
     },
     deleteItem() {
       this.confirmDialog.loading = true;
@@ -326,15 +258,20 @@ export default {
       }, 1500);
     },
   },
-  // async fetch() {
-  //   await this.fetchUsers()
-  // },
+  filters: {
+    ucfirst(x) {
+      return x.charAt(0).toUpperCase() + x.slice(1);
+    },
+    datetime(x) {
+      return moment(x).format("MMMM D YYYY, h:mm a");
+    },
+  },
   async created() {
     if (this.$route.query) {
       this.alert.message = this.$route.query.alertMessage;
       this.alert.show = this.$route.query.alertShow;
     }
-    await this.fetchUsers()
+    await this.fetchUsers();
   },
 };
 </script>
