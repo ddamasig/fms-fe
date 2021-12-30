@@ -3,7 +3,9 @@
     <!-- Breadcrumbs -->
     <f-breadcrumbs :items="breadcrumbs"></f-breadcrumbs>
 
-    <v-alert v-show="alert.show" type="success">{{ alert.message }}</v-alert>
+    <v-alert v-show="alert.show" :type="alert.type">{{
+      alert.message
+    }}</v-alert>
 
     <v-row class="justify-center">
       <v-col md="6">
@@ -12,6 +14,7 @@
           <v-form
             method="POST"
             enctype="multipart/form-data"
+            ref="form"
             v-model="model.valid"
           >
             <v-card-title> Basic Information </v-card-title>
@@ -74,7 +77,7 @@
                       dense
                       outlined
                       v-model="model.first_name"
-                      :rules="nameRules"
+                      :rules="rules.first_name"
                       :counter="256"
                       label="First name"
                       required
@@ -86,7 +89,7 @@
                       dense
                       outlined
                       v-model="model.middle_name"
-                      :rules="nameRules"
+                      :rules="rules.middle_name"
                       :counter="256"
                       label="Middle name"
                       required
@@ -98,7 +101,7 @@
                       dense
                       outlined
                       v-model="model.last_name"
-                      :rules="nameRules"
+                      :rules="rules.last_name"
                       :counter="256"
                       label="Last name"
                       required
@@ -110,7 +113,7 @@
                       dense
                       outlined
                       v-model="model.email"
-                      :rules="emailRules"
+                      :rules="rules.email"
                       label="E-mail"
                       required
                     ></v-text-field>
@@ -121,7 +124,7 @@
                       dense
                       outlined
                       v-model="model.phone_number"
-                      :rules="emailRules"
+                      :rules="rules.phone_number"
                       label="Phone Number"
                       persistent-hint
                       hint="Format: +63xxxxxxxxxx or 09xxxxxxxxx"
@@ -149,9 +152,7 @@
                       outlined
                       v-model="model.birthdate"
                       type="date"
-                      :rules="emailRules"
                       label="Birthdate"
-                      required
                     ></v-text-field>
                   </v-col>
                 </v-row>
@@ -239,9 +240,10 @@
             <v-spacer />
             <v-btn elevation="0" text> Reset </v-btn>
             <v-btn
+              type="submit"
               color="primary"
               elevation="0"
-              @click="confirmDialog.show = !confirmDialog.show"
+              @click="validateField"
             >
               Save
             </v-btn>
@@ -300,6 +302,31 @@ export default {
       message: null,
       show: false,
     },
+    /**
+     * Define form validation rules here.
+     */
+    rules: {
+      first_name: [
+        (v) => !!v || "First name is required",
+        (v) => v.length <= 256 || "First name must be less than 257 characters",
+      ],
+      middle_name: [
+        (v) =>
+          v.length <= 256 || "Middle name must be less than 257 characters",
+      ],
+      last_name: [
+        (v) => !!v || "Last name is required",
+        (v) => v.length <= 256 || "Last name must be less than 257 characters",
+      ],
+      phone_number: [
+        (v) => !!v || "Phone number is required",
+        (v) => v.length == 13 || v.length == 11 || "Phone number must be valid",
+      ],
+      email: [
+        (v) => !!v || "E-mail is required",
+        (v) => /.+@.+/.test(v) || "E-mail must be valid",
+      ],
+    },
     imageUrl: "",
     imageName: "",
     imageFile: "",
@@ -309,6 +336,7 @@ export default {
       last_name: "",
       avatar: "",
       sex: "male",
+      phone_number: "",
       birthdate: "",
       roles: [],
     },
@@ -355,14 +383,16 @@ export default {
     ],
   }),
   computed: {
-    // a computed getter
+    /**
+     * The password is derived from the first and last name of the user.
+     */
     password: function () {
       // `this` points to the vm instance
-      let p1 = this.model.first_name.slice(0,1)
-      let p2 = this.model.last_name
-      let p3 = '!@#'
-      return `${p1}${p2}${p3}`.toLowerCase()
-    }
+      let p1 = this.model.first_name.slice(0, 1);
+      let p2 = this.model.last_name;
+      let p3 = "!@#$%^&";
+      return `${p1}${p2}${p3}`.toLowerCase();
+    },
   },
   methods: {
     removeFile() {
@@ -393,6 +423,15 @@ export default {
       }
     },
     /**
+     * Validates the form and shows the confirm dialog.
+     */
+    validateField() {
+      let valid = this.$refs.form.validate();
+      if (valid) {
+        this.confirmDialog.show = true;
+      }
+    },
+    /**
      * Sends an HTTP POST request to the backend to create
      * a new user.
      */
@@ -410,26 +449,50 @@ export default {
       fd.append("password", this.password);
       fd.append("sex", this.model.sex);
       this.model.roles.map((x) => {
-        fd.append("roles[]", x)
-      })
-      let res = await this.$axios.post("/user", fd);
-      console.log(res);
-      if (res.status == 200) {
-        console.log("SUCCESS!!");
-      }
-      setTimeout(() => {
-        this.confirmDialog.loading = false;
-        this.confirmDialog.show = false;
-        this.alert.message = "User successfully created!";
-        this.alert.show = true;
-        // this.$router.push({
-        //   path: '/security/users',
-        //   query: {
-        //     alertMessage: this.alert.message,
-        //     alertShow: this.alert.show,
-        //   }
-        // })
-      }, 1500);
+        fd.append("roles[]", x);
+      });
+      await this.$axios
+        .post("/user", fd)
+        .then((res) => {
+          console.log("Response:");
+          console.log(res);
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+          this.alert.message =
+            "User successfully created! You will be redirected to the user list page in a few seconds.";
+          this.alert.show = true;
+          this.alert.type = "success";
+
+          setTimeout(() => {
+            this.$router.push({
+              path: "/security/users",
+              query: {
+                alertMessage: this.alert.message,
+                alertType: this.alert.type,
+                alertShow: this.alert.show,
+              },
+            });
+          }, 1500);
+        })
+        .catch((error) => {
+          // Handle 422 Invalid Input Errors
+          if (error.response.status == 422) {
+            let errs = error.response.data.errors;
+            let messages = "";
+            for (var key of Object.keys(errs)) {
+              messages += `${errs[key]} `;
+            }
+            this.alert.message = messages;
+            this.alert.show = true;
+            this.alert.type = "error";
+          }
+
+          this.confirmDialog.loading = false;
+          this.confirmDialog.show = false;
+        });
+
+      // Scroll to the top of the page.
+      this.$vuetify.goTo(0);
     },
   },
 };

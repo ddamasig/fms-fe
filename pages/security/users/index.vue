@@ -74,7 +74,7 @@
                   <v-avatar size="32" color="primary">
                     <v-img
                       v-if="item.avatar"
-                      :src="`https://i.pravatar.cc/${item.avatar}`"
+                      :src="item.avatar"
                     />
                     <v-icon v-else dark color="primary lighten-5"
                       >mdi-account</v-icon

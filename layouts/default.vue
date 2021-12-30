@@ -217,9 +217,5 @@ export default {
       title: "Vuetify.js",
     };
   },
-  created() {
-    console.log("Current User:");
-    console.log(this.$auth.user);
-  },
 };
 </script>
